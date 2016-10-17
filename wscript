@@ -6,7 +6,7 @@ import waflib.extras.wurf_options
 from waflib.TaskGen import feature, after_method
 
 APPNAME = 'petro-python'
-VERSION = '0.0.0'
+VERSION = '1.0.0'
 
 
 def options(opt):
