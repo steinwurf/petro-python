@@ -18,7 +18,10 @@ def read_nalu_size(data, length_size):
     """Read nalu size."""
     result = 0
     for i in range(length_size):
-        result |= ord(data[i]) << ((length_size - 1) - i) * 8
+        v = data[i]
+        if type(v) == str:
+            v = ord(v)
+        result |= v << ((length_size - 1) - i) * 8
     return result
 
 
