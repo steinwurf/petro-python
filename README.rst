@@ -2,8 +2,8 @@
 petro-python
 ============
 
-petro-python provides bindings for the c++ lib petro. These bindings are limited
-to only exposign the avc and aac extractor.
+petro-python provides bindings for the c++ library `petro <https://github.com/steinwurf/petro>`_.
+These bindings are limited to only exposign the avc and aac extractor.
 
 .. contents:: Table of Contents:
    :local:
