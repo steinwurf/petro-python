@@ -12,6 +12,7 @@ Distributed under the "BSD License". See the accompanying LICENSE.rst file.
 
 import unittest
 import petro
+import os
 
 
 class TestVersion(unittest.TestCase):
@@ -32,11 +33,11 @@ class TestExtractH264(unittest.TestCase):
 
     def test_extraction(self):
         """Test extraction."""
-        h264_file_path = 'test/test1.h264'
+        h264_file_path = os.path.join('test', 'test1.h264')
         h264_file = open(h264_file_path, 'rb')
 
         extractor = petro.AVCSampleExtractor()
-        mp4_file_path = 'test/test1.mp4'
+        mp4_file_path = os.path.join('test', 'test1.mp4')
         extractor.set_file_path(mp4_file_path)
         self.assertEqual(
             mp4_file_path, extractor.file_path(), msg=mp4_file_path)
@@ -77,7 +78,10 @@ class TestExtractH264(unittest.TestCase):
         """Read nalu size."""
         result = 0
         for i in range(length_size):
-            result |= ord(data[i]) << ((length_size - 1) - i) * 8
+            v = data[i]
+            if type(v) == str:
+                v = ord(v)
+            result |= v << ((length_size - 1) - i) * 8
         return result
 
 
@@ -86,11 +90,11 @@ class TestExtractAAC(unittest.TestCase):
 
     def test_extraction(self):
         """Test extraction."""
-        aac_file_path = 'test/test1.aac'
+        aac_file_path = os.path.join('test', 'test1.aac')
         aac_file = open(aac_file_path, 'rb')
 
         extractor = petro.AACSampleExtractor()
-        mp4_file_path = 'test/test1.mp4'
+        mp4_file_path = os.path.join('test', 'test1.mp4')
         extractor.set_file_path(mp4_file_path)
         self.assertEqual(
             mp4_file_path, extractor.file_path(), msg=mp4_file_path)
@@ -117,7 +121,9 @@ class TestExtractAAC(unittest.TestCase):
 
 
 def main():
+    """Main function."""
     unittest.main()
+
 
 if __name__ == "__main__":
     main()

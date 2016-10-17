@@ -10,8 +10,8 @@ project_name = 'petro-python'
 
 def run_command(args):
     print("Running: {}".format(args))
-    # sys.stdout.flush()
-    # subprocess.check_call(args)
+    sys.stdout.flush()
+    subprocess.check_call(args)
 
 
 def get_tool_options(properties):

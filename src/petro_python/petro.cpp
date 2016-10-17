@@ -119,7 +119,7 @@ void create_extractors()
          "Return the picture parameter set.\n\n"
          "\t:returns: The picture parameter set.\n")
     .def("nalu_length_size",
-        &petro::extractor::avc_sample_extractor::nalu_length_size,
+         &petro::extractor::avc_sample_extractor::nalu_length_size,
          "Return the nalu length size.\n\n"
          "\t:returns: the size of the length preceeded each nalu sample in the "
          "h264 sample.\n");
