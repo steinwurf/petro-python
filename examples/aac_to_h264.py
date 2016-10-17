@@ -16,7 +16,6 @@ import sys
 
 def main():
     """Example showing how to extract aac data."""
-    sys.argv.append('--mp4-file=../test/test1.mp4')
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument(
         '--mp4-file',

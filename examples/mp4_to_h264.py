@@ -24,7 +24,6 @@ def read_nalu_size(data, length_size):
 
 def main():
     """Example showing how to extract h264 data."""
-    sys.argv.append('--mp4-file=../test/test1.mp4')
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument(
         '--mp4-file',
