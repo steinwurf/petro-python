@@ -2,8 +2,6 @@
 # encoding: utf-8
 
 import os
-import waflib.extras.wurf_options
-from waflib.TaskGen import feature, after_method
 
 APPNAME = 'petro-python'
 VERSION = '1.0.0'
@@ -11,43 +9,7 @@ VERSION = '1.0.0'
 
 def options(opt):
 
-    opt.load('wurf_common_tools')
     opt.load('python')
-
-
-def resolve(ctx):
-
-    import waflib.extras.wurf_dependency_resolve as resolve
-
-    ctx.load('wurf_common_tools')
-
-    ctx.add_dependency(resolve.ResolveVersion(
-        name='waf-tools',
-        git_repository='github.com/steinwurf/waf-tools.git',
-        major=3))
-
-    ctx.add_dependency(resolve.ResolveVersion(
-        name='boost',
-        git_repository='github.com/steinwurf/boost.git',
-        major=2))
-
-    ctx.add_dependency(resolve.ResolveVersion(
-        name='petro',
-        git_repository='github.com/steinwurf/petro.git',
-        major=6))
-
-    # Internal dependencies
-    if ctx.is_toplevel():
-
-        ctx.add_dependency(resolve.ResolveVersion(
-            name='gtest',
-            git_repository='github.com/steinwurf/gtest.git',
-            major=3))
-
-
-def configure(conf):
-
-    conf.load("wurf_common_tools")
 
 
 def build(bld):
@@ -81,14 +43,9 @@ def build(bld):
 
     bld.recurse('src/petro_python')
 
-
-@feature('pyext')
-@after_method('apply_link')
-def test_kodo_python(self):
-    # Only execute the tests within the current project
-    if self.path.is_child_of(self.bld.srcnode):
-        if self.bld.has_tool_option('run_tests'):
-            self.bld.add_post_fun(exec_test_python)
+    if bld.is_toplevel():
+        if bld.has_tool_option('run_tests'):
+            bld.add_post_fun(exec_test_python)
 
 
 def exec_test_python(bld):
