@@ -19,8 +19,6 @@ def build(bld):
     if not bld.env['BUILD_PYTHON']:
         bld.fatal('Python was not configured properly')
 
-    bld.load("wurf_common_tools")
-
     bld.env.append_unique(
         'DEFINES_STEINWURF_VERSION',
         'STEINWURF_PETRO_PYTHON_VERSION="{}"'.format(
