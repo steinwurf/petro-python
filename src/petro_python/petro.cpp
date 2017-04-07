@@ -4,8 +4,10 @@
 // Distributed under the "BSD License". See the accompanying LICENSE.rst file.
 
 #include <boost/python.hpp>
-#include <boost/python/docstring_options.hpp>
-#include <boost/python/args.hpp>
+
+#include <cstdint>
+#include <string>
+#include <vector>
 
 #include <petro/extractor/aac_sample_extractor.hpp>
 #include <petro/extractor/avc_sample_extractor.hpp>
