@@ -42,7 +42,7 @@ class TestExtractH264(unittest.TestCase):
         self.assertEqual(
             mp4_file_path, extractor.file_path(), msg=mp4_file_path)
 
-        self.assertTrue(extractor.open())
+        extractor.open()
 
         self.check_sample(h264_file, extractor.sps())
         self.check_sample(h264_file, extractor.pps())
@@ -99,7 +99,7 @@ class TestExtractAAC(unittest.TestCase):
         self.assertEqual(
             mp4_file_path, extractor.file_path(), msg=mp4_file_path)
 
-        self.assertTrue(extractor.open())
+        extractor.open()
 
         self.assertFalse(extractor.at_end())
         while not extractor.at_end():
