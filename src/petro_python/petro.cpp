@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <system_error>
 
 #include <petro/extractor/aac_sample_extractor.hpp>
 #include <petro/extractor/avc_sample_extractor.hpp>
@@ -22,6 +23,17 @@ static PyObject* pointer_to_python(const uint8_t* data, uint32_t size)
 #else
     return PyString_FromStringAndSize((char*)data, size);
 #endif
+}
+
+template<class Extractor>
+void open(Extractor& extractor)
+{
+    std::error_code error;
+    extractor.open(error);
+    if (error)
+    {
+        throw std::system_error(error);
+    }
 }
 
 template<class Extractor>
@@ -54,9 +66,8 @@ void define_extractor_functions(ExtractorClass& extrator_class)
     using boost::python::arg;
 
     extrator_class
-    .def("open", &extractor_type::open,
-         "Open extractor.\n\n"
-         "\t:returns: True if the operation was succesful, otherwise False.\n")
+    .def("open", &open<extractor_type>,
+         "Open extractor. Throws an exception if the operation failed.")
     .def("close", &extractor_type::close, "Close extractor.")
     .def("reset", &extractor_type::reset, "Reset extractor.")
     .def("file_path", &extractor_type::file_path,
@@ -100,7 +111,7 @@ void create_extractors()
         class_<petro::extractor::aac_sample_extractor, boost::noncopyable>(
             "AACSampleExtractor",
             "Extractor for extracting AAC samples.",
-            init<>("Extrator constructor."));
+            init<>("Extractor constructor."));
     define_extractor_functions(aac_extractor_class);
     aac_extractor_class
     .def("adts_header", &adts_header,
@@ -111,7 +122,7 @@ void create_extractors()
         class_<petro::extractor::avc_sample_extractor, boost::noncopyable>(
             "AVCSampleExtractor",
             "Extractor for extracting AVC samples.",
-            init<>("Extrator constructor."));
+            init<>("Extractor constructor."));
     define_extractor_functions(avc_extractor_class);
     avc_extractor_class
     .def("sps", &sps,
