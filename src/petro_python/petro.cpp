@@ -67,7 +67,7 @@ void define_extractor_functions(ExtractorClass& extrator_class)
 
     extrator_class
     .def("open", &open<extractor_type>,
-         "Open extractor. Throws an exception if the operation was successful.")
+         "Open extractor. Throws an exception if the operation failed.")
     .def("close", &extractor_type::close, "Close extractor.")
     .def("reset", &extractor_type::reset, "Reset extractor.")
     .def("file_path", &extractor_type::file_path,
