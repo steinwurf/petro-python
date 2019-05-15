@@ -3,7 +3,7 @@
 //
 // Distributed under the "BSD License". See the accompanying LICENSE.rst file.
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
 #include <cstdint>
 #include <string>
@@ -15,16 +15,6 @@
 
 namespace petro_python
 {
-
-static PyObject* pointer_to_python(const uint8_t* data, uint32_t size)
-{
-#if PY_MAJOR_VERSION >= 3
-    return PyBytes_FromStringAndSize((char*)data, size);
-#else
-    return PyString_FromStringAndSize((char*)data, size);
-#endif
-}
-
 template<class Extractor>
 void open(Extractor& extractor)
 {
@@ -37,33 +27,33 @@ void open(Extractor& extractor)
 }
 
 template<class Extractor>
-PyObject* sample_data(Extractor& extractor)
+pybind11::bytes sample_data(Extractor& extractor)
 {
-    return pointer_to_python(extractor.sample_data(), extractor.sample_size());
+    return pybind11::bytes(
+        (char*)extractor.sample_data(), extractor.sample_size());
 }
 
-PyObject* adts_header(petro::extractor::aac_sample_extractor& extractor)
+pybind11::bytes adts_header(petro::extractor::aac_sample_extractor& extractor)
 {
     std::vector<uint8_t> adts_header(extractor.adts_header_size());
     extractor.write_adts_header(adts_header.data());
-    return pointer_to_python(adts_header.data(), adts_header.size());
+    return pybind11::bytes((char*)adts_header.data(), adts_header.size());
 }
 
-PyObject* sps(petro::extractor::avc_sample_extractor& extractor)
+pybind11::bytes sps(petro::extractor::avc_sample_extractor& extractor)
 {
-    return pointer_to_python(extractor.sps_data(), extractor.sps_size());
+    return pybind11::bytes((char*)extractor.sps_data(), extractor.sps_size());
 }
 
-PyObject* pps(petro::extractor::avc_sample_extractor& extractor)
+pybind11::bytes pps(petro::extractor::avc_sample_extractor& extractor)
 {
-    return pointer_to_python(extractor.pps_data(), extractor.pps_size());
+    return pybind11::bytes((char*)extractor.pps_data(), extractor.pps_size());
 }
 
 template<class ExtractorClass>
 void define_extractor_functions(ExtractorClass& extrator_class)
 {
-    using extractor_type = typename ExtractorClass::wrapped_type;
-    using boost::python::arg;
+    using extractor_type = typename ExtractorClass::type;
 
     extrator_class
     .def("open", &open<extractor_type>,
@@ -74,8 +64,8 @@ void define_extractor_functions(ExtractorClass& extrator_class)
          "Return the file path.\n\n"
          "\t:returns: The file path.\n")
     .def("set_file_path", &extractor_type::set_file_path,
-         arg("file_path"),
-         "Set the file path of the fíle to open.\n\n"
+         pybind11::arg("file_path"),
+         "Set the file path of the file to open.\n\n"
          "\t:param file_path: The file path of the file to open.")
     .def("media_duration", &extractor_type::media_duration,
          "Return the total media duration in microseconds.\n\n"
@@ -102,28 +92,25 @@ void define_extractor_functions(ExtractorClass& extrator_class)
          "\t:returns: The current sample data.\n");
 }
 
-void create_extractors()
+void create_extractors(pybind11::module& m)
 {
-    using boost::python::class_;
-    using boost::python::init;
-
     auto aac_extractor_class =
-        class_<petro::extractor::aac_sample_extractor, boost::noncopyable>(
-            "AACSampleExtractor",
-            "Extractor for extracting AAC samples.",
-            init<>("Extractor constructor."));
+        pybind11::class_<petro::extractor::aac_sample_extractor>(
+            m, "AACSampleExtractor", "Extractor for extracting AAC samples.")
+        .def(pybind11::init<>());
     define_extractor_functions(aac_extractor_class);
+
     aac_extractor_class
     .def("adts_header", &adts_header,
          "Return the current adts header.\n\n"
          "\t:returns: The current adts header.\n");
 
     auto avc_extractor_class =
-        class_<petro::extractor::avc_sample_extractor, boost::noncopyable>(
-            "AVCSampleExtractor",
-            "Extractor for extracting AVC samples.",
-            init<>("Extractor constructor."));
+        pybind11::class_<petro::extractor::avc_sample_extractor>(
+            m, "AVCSampleExtractor", "Extractor for extracting AVC samples.")
+        .def(pybind11::init<>());
     define_extractor_functions(avc_extractor_class);
+
     avc_extractor_class
     .def("sps", &sps,
          "Return the sequence parameter set.\n\n"
@@ -148,25 +135,20 @@ std::string version()
 #ifdef STEINWURF_PETRO_VERSION
     version += std::string(STEINWURF_PETRO_VERSION);
 #endif
-    version += std::string("\n\tboost: ");
-#ifdef STEINWURF_BOOST_VERSION
-    version += std::string(STEINWURF_BOOST_VERSION);
+    version += std::string("\n\tpybind11: ");
+#ifdef STEINWURF_PYBIND11_VERSION
+    version += std::string(STEINWURF_PYBIND11_VERSION);
 #endif
 
     return version;
 }
 
-void create_version_function()
+PYBIND11_MODULE(petro, m)
 {
-    using namespace boost::python;
-    scope().attr("__version__") = version();
-}
+    pybind11::options options;
+    options.disable_function_signatures();
 
-BOOST_PYTHON_MODULE(petro)
-{
-    boost::python::docstring_options doc_options;
-    doc_options.disable_signatures();
-    create_version_function();
-    create_extractors();
+    m.attr("__version__") = version();
+    create_extractors(m);
 }
 }

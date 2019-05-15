@@ -13,8 +13,7 @@ project_name = 'petro-python'
 project_dependencies = \
     [
         'waf-tools',
-        'boost',
-        'gtest',
+        'pybind11',
         'petro',
     ]
 

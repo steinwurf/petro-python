@@ -1,25 +1,14 @@
 #! /usr/bin/env python
 # encoding: utf-8
 
-extra_linkflags = []
-
-CXX = bld.env.get_flat("CXX")
-# Matches MSVC
-if 'CL.exe' in CXX or 'cl.exe' in CXX:
-    extra_linkflags = ['/EXPORT:initpetro']
-
 bld(
     features='cxx cxxshlib pyext',
     source=bld.path.ant_glob('**/*.cpp'),
     target='petro',
     name='petro-python',
-    linkflags=extra_linkflags,
     use=[
         'STEINWURF_VERSION',
-        'boost_includes',
-        'boost_python',
-        'boost_filesystem',
-        'boost_system',
+        'pybind11_includes',
         'petro'
     ]
 )

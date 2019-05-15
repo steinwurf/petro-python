@@ -9,35 +9,15 @@ VERSION = '2.0.0'
 
 def options(opt):
 
-    opt.load('python')
+    if opt.is_toplevel():
+        opt.load('python')
 
 
 def build(bld):
 
-    # Ensure that Python was configured properly in the configure step of
-    # the boost wscript (boost-python needs to be configured in the boost repo)
-    if not bld.env['BUILD_PYTHON']:
-        bld.fatal('Python was not configured properly')
-
     bld.env.append_unique(
         'DEFINES_STEINWURF_VERSION',
-        'STEINWURF_PETRO_PYTHON_VERSION="{}"'.format(
-            VERSION))
-
-    # Remove NDEBUG which is added from conf.check_python_headers
-    flag_to_remove = 'NDEBUG'
-    defines = ['DEFINES_PYEMBED', 'DEFINES_PYEXT']
-    for define in defines:
-        while(flag_to_remove in bld.env[define]):
-            bld.env[define].remove(flag_to_remove)
-
-    bld.env['CFLAGS_PYEXT'] = []
-    bld.env['CXXFLAGS_PYEXT'] = []
-
-    CXX = bld.env.get_flat("CXX")
-    # Matches both /usr/bin/g++ and /user/bin/clang++
-    if 'g++' in CXX or 'clang' in CXX:
-        bld.env.append_value('CXXFLAGS', '-fPIC')
+        'STEINWURF_PETRO_PYTHON_VERSION="{}"'.format(VERSION))
 
     bld.recurse('src/petro_python')
 

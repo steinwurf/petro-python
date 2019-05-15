@@ -7,11 +7,11 @@
         "sources": ["github.com/steinwurf/waf-tools.git"]
     },
     {
-        "name": "boost",
+        "name": "pybind11",
         "resolver": "git",
         "method": "semver",
-        "major": 3,
-        "sources": ["github.com/steinwurf/boost.git"]
+        "major": 1,
+        "sources": ["github.com/steinwurf/pybind11.git"]
     },
     {
         "name": "petro",
@@ -19,13 +19,5 @@
         "method": "semver",
         "major": 12,
         "sources": ["github.com/steinwurf/petro.git"]
-    },
-    {
-        "name": "gtest",
-        "internal": true,
-        "resolver": "git",
-        "method": "semver",
-        "major": 4,
-        "sources": ["github.com/steinwurf/gtest.git"]
     }
 ]
