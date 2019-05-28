@@ -7,6 +7,9 @@ every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.0.0
+-----
 * Minor: Removed the gtest internal dependency.
 * Major: Use pybind11 instead of boost-python.
 * Major: Upgrade to petro 12

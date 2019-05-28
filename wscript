@@ -4,7 +4,7 @@
 import os
 
 APPNAME = 'petro-python'
-VERSION = '2.0.0'
+VERSION = '3.0.0'
 
 
 def options(opt):
