@@ -2,6 +2,9 @@
 petro-python
 ============
 
+.. image:: https://travis-ci.org/steinwurf/petro-python.svg?branch=master
+    :target: https://travis-ci.org/steinwurf/petro-python
+
 petro-python provides bindings for the c++ library `petro <https://github.com/steinwurf/petro>`_.
 These bindings are limited to only exposign the avc and aac extractor.
 
