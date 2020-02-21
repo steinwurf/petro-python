@@ -25,6 +25,13 @@ def main():
         help='mp4 file to extract aac data from.')
 
     parser.add_argument(
+        '--track-id',
+        dest='track_id',
+        required=True,
+        type=int,
+        help='the ID of the aac track.')
+
+    parser.add_argument(
         '--out',
         dest='output_file',
         default='out.aac',
@@ -37,10 +44,11 @@ def main():
     args = parser.parse_args()
 
     extractor = petro.AACSampleExtractor()
-    extractor.set_file_path(args.mp4_file)
-    if not extractor.open():
-        print("Unable to open {}".format(args.mp4_file))
-        return
+
+    with open(args.mp4_file, 'rb') as input_file:
+        mp4_data = input_file.read()
+
+    extractor.open(mp4_data, args.track_id)
 
     aac_file = open(args.output_file, 'wb')
 

@@ -7,6 +7,10 @@ every change, see the Git log.
 Latest
 ------
 * tbd
+* Major: Changed the extractor.open() function to take an input buffer and a
+  track ID as arguments. The set_file_path() and path() functions are removed,
+  as they are no longer needed.
+* Major: Upgrade to petro 16
 
 3.0.0
 -----

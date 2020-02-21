@@ -5,6 +5,7 @@
 
 #include <pybind11/pybind11.h>
 
+#include <cassert>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -16,10 +17,20 @@
 namespace petro_python
 {
 template<class Extractor>
-void open(Extractor& extractor)
+void open(Extractor& extractor, pybind11::handle input, uint32_t track_id)
 {
+    PyObject* obj = input.ptr();
+    assert(PYBIND11_BYTES_CHECK(obj) && "The input data should be a "
+           "Python bytes object");
+
+    char* data;
+    ssize_t size;
+    if (PYBIND11_BYTES_AS_STRING_AND_SIZE(obj, &data, &size))
+        pybind11::pybind11_fail("Unable to extract py::bytes!");
+
     std::error_code error;
-    extractor.open(error);
+    extractor.open((const uint8_t*)data, (uint64_t)size, track_id, error);
+
     if (error)
     {
         throw std::system_error(error);
@@ -57,16 +68,15 @@ void define_extractor_functions(ExtractorClass& extrator_class)
 
     extrator_class
     .def("open", &open<extractor_type>,
-         "Open extractor. Throws an exception if the operation failed.")
+         pybind11::arg("input"), pybind11::arg("track_id"),
+         "Open extractor. Throws an exception if the operation failed.\n\n"
+         "\t:param input: The input data as a Python bytes object.\n"
+         "\t:param track_id: The ID of the track that should be opened.")
     .def("close", &extractor_type::close, "Close extractor.")
     .def("reset", &extractor_type::reset, "Reset extractor.")
-    .def("file_path", &extractor_type::file_path,
-         "Return the file path.\n\n"
-         "\t:returns: The file path.\n")
-    .def("set_file_path", &extractor_type::set_file_path,
-         pybind11::arg("file_path"),
-         "Set the file path of the file to open.\n\n"
-         "\t:param file_path: The file path of the file to open.")
+    .def("track_id", &extractor_type::track_id,
+         "Return the track ID.\n\n"
+         "\t:returns: The selected track ID.\n")
     .def("media_duration", &extractor_type::media_duration,
          "Return the total media duration in microseconds.\n\n"
          "\t:returns: The total media duration in microseconds.\n")

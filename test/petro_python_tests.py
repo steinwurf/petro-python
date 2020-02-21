@@ -38,11 +38,11 @@ class TestExtractH264(unittest.TestCase):
 
         extractor = petro.AVCSampleExtractor()
         mp4_file_path = os.path.join('test', 'test1.mp4')
-        extractor.set_file_path(mp4_file_path)
-        self.assertEqual(
-            mp4_file_path, extractor.file_path(), msg=mp4_file_path)
+        with open(mp4_file_path, 'rb') as mp4_file:
+            mp4_data = mp4_file.read()
 
-        extractor.open()
+        # The track id of the test file's h264 trak is 1
+        extractor.open(mp4_data, 1)
 
         self.check_sample(h264_file, extractor.sps())
         self.check_sample(h264_file, extractor.pps())
@@ -95,11 +95,11 @@ class TestExtractAAC(unittest.TestCase):
 
         extractor = petro.AACSampleExtractor()
         mp4_file_path = os.path.join('test', 'test1.mp4')
-        extractor.set_file_path(mp4_file_path)
-        self.assertEqual(
-            mp4_file_path, extractor.file_path(), msg=mp4_file_path)
+        with open(mp4_file_path, 'rb') as mp4_file:
+            mp4_data = mp4_file.read()
 
-        extractor.open()
+        # The track id of the test file's aac trak is 2
+        extractor.open(mp4_data, 2)
 
         self.assertFalse(extractor.at_end())
         while not extractor.at_end():

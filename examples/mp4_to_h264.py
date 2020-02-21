@@ -36,6 +36,13 @@ def main():
         help='mp4 file to extract h264 data from.')
 
     parser.add_argument(
+        '--track-id',
+        dest='track_id',
+        required=True,
+        type=int,
+        help='the ID of the h264 track.')
+
+    parser.add_argument(
         '--out',
         dest='output_file',
         default='out.h264',
@@ -48,13 +55,14 @@ def main():
     args = parser.parse_args()
 
     extractor = petro.AVCSampleExtractor()
-    extractor.set_file_path(args.mp4_file)
-    if not extractor.open():
-        print("Unable to open {}".format(args.mp4_file))
-        return
+
+    with open(args.mp4_file, 'rb') as input_file:
+        mp4_data = input_file.read()
+
+    extractor.open(mp4_data, args.track_id)
 
     h264_file = open(args.output_file, 'wb')
-    start_code = '\x00\x00\x00\x01'
+    start_code = b'\x00\x00\x00\x01'
 
     h264_file.write(start_code)
     h264_file.write(extractor.sps())
